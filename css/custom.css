@@ -1,0 +1,8 @@
+button.phone.mdc-button {
+    background-color: #BC031F;
+}
+
+button.phone.mdc-button:active {
+    background-color: #BC031F!important;
+    opacity: 0.7;
+}
