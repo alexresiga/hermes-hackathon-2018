@@ -18,7 +18,7 @@ let server = http.createServer(function (req, res) {
     
     bestbuy.products('search=oven&search=stainless&search=steel',{show:'sku,name,salePrice'}).then(function(data) {
         console.log(data);
-    });
+    }
 
     // randomCommentByQuery(url.parse(req.url, true).query.q, function (json) {
     //     res.end(JSON.stringify(json));
