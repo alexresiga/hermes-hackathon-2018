@@ -10,6 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "bestbuy": "^2.1.3",
-    "enum": "^2.5.0"
+    "cheerio": "^1.0.0-rc.2",
+    "enum": "^2.5.0",
+    "nodemon": "^1.18.6",
+    "request": "^2.88.0"
   }
 }
