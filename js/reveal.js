@@ -593,7 +593,7 @@
 		dom.speakerNotes.setAttribute( 'tabindex', '0' );
 
 		// Overlay graphic which is displayed during the paused mode
-		dom.pauseOverlay = createSingletonNode( dom.wrapper, 'div', 'pause-overlay', '<button class="resume-button">Resume presentation</button>' );
+		dom.pauseOverlay = createSingletonNode( dom.wrapper, 'div', 'pause-overlay', 'salut<button class="resume-button">Resume presentation</button>' );
 		dom.resumeButton = dom.pauseOverlay.querySelector( '.resume-button' );
 
 		dom.wrapper.setAttribute( 'role', 'application' );
