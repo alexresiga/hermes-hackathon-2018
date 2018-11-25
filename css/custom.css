@@ -63,11 +63,12 @@ button.pc.mdc-button {
 .item { 
     
     border: 3px solid #1B1B1E!important;
-    padding: 5px!important;
+    padding: 10px 7px!important;
     min-width: 300px!important;
+    min-height: 200px!important;
     overflow: auto;
     display: inline-block;
-    margin: 0px 30px!important;
+    margin: 0px 20px!important;
 }
 
 
@@ -117,4 +118,95 @@ h3 > a {
 h3 > a:hover {
     text-decoration: underline!important;
     color: #1B1B1E!important;
+}
+
+
+input[type=checkbox] + label {
+    display: inline-block;
+    margin: 0.2em;
+    cursor: pointer;
+    padding: 0.2em;
+    font-size: 0.7em!important;
+  }
+  
+  input[type=checkbox] {
+    display: none;
+  }
+  
+  input[type=checkbox] + label:before {
+    content: "\2714";
+    border: 0.1em solid #000;
+    border-radius: 0.2em;
+    display: inline-block;
+    
+    width: 0.8em;
+    height: 0.8em;
+    padding-left: 0.2em;
+    padding-bottom: 0.3em;
+    margin-right: 0.2em;
+    vertical-align: bottom;
+    color: transparent;
+    transition: .2s;
+    
+  }
+  
+  input[type=checkbox] + label:active:before {
+    transform: scale(0);
+  }
+  
+  input[type=checkbox]:checked + label:before {
+    background-color: #BC031F;
+    border-color: #BC031F;
+    color: #fff;
+  }
+  
+  input[type=checkbox]:disabled + label:before {
+    transform: scale(1);
+    border-color: #aaa;
+  }
+  
+  input[type=checkbox]:checked:disabled + label:before {
+    transform: scale(1);
+    background-color: #BC031F;
+    border-color: #BC031F;
+  }
+
+  .form-radio
+{
+     -webkit-appearance: none;
+     -moz-appearance: none;
+     appearance: none;
+     display: inline-block;
+     position: relative;
+     background-color: #BC031F;
+     color: #666;
+     top: 10px;
+     height: 50px;
+     width: 50px;
+     border: 0;
+     border-radius: 50px;
+     cursor: pointer;     
+     margin-right: 17px;
+     outline: none;
+}
+.form-radio:checked::before
+{
+     position: absolute;
+     font: 33px/1 'Open Sans', sans-serif;
+     left: 13px;
+     top: 7px;
+     content: '\02143';
+     transform: rotate(40deg);
+}
+.form-radio:hover
+{
+     background-color: #c52020;
+}
+.form-radio:checked
+{
+     background-color: #a81515;
+}
+
+label.radio-label {
+    margin: 17px 17px 17px 0px;
 }
