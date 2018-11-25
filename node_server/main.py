@@ -85,10 +85,6 @@ def make_product_json(product):
     if emag:
         ret['store_urls'].append(emag)
 
-    cel = Cel.get_store_object(product)
-    if cel:
-        ret['store_urls'].append(cel)
-
     return ret
 
 
@@ -126,7 +122,7 @@ def filter_product(p, size, back, front, battery, ram, price):
         return False
 
     if not (front == 'no' or (front == 'sometimes' and p.front_camera >= 5) or (
-            front == 'yes' and p.front_camera >= 7)):
+                    front == 'yes' and p.front_camera >= 7)):
         return False
 
     if not (battery == 'no' or (battery == 'yes' and p.battery >= 20)):
@@ -136,7 +132,7 @@ def filter_product(p, size, back, front, battery, ram, price):
         return False
 
     if not (price == '2000' or (price == '500' and p.price * 4 <= 800) or (
-            price == '1000' and p.price * 4 <= 1700) or (
+                    price == '1000' and p.price * 4 <= 1700) or (
                     price == '1500' and p.price * 4 <= 2500)):
         return False
 
