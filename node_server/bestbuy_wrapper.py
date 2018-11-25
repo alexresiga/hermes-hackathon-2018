@@ -9,7 +9,7 @@ class BestBuyProduct:
         self.name = d['Product Name']
 
         if self.name.endswith('GB'):
-            self.name = self.name.split(' ')[:-1]
+            self.name = ' '.join(self.name.split(' ')[:-1])
 
         self.manufacturer = d['Device Manufacturer']
         self.screen_size = float(d['Screen Size'][0:-7])
@@ -56,4 +56,4 @@ class BestBuy:
                 ret.extend([BestBuyProduct(p) for p in response.json()['products']])
             except KeyError as e:
                 print('E nasoala treaba men, ', e)
-        return ret
+        return list(set(ret))

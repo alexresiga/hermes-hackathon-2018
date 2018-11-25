@@ -12,7 +12,7 @@ app = Flask(__name__)
 def compare_phones_emag(name, storage, product):
     product_string = product.manufacturer + ' ' + product.name
     if product_string.endswith('GB'):
-        product_string = product_string.split(' ')[:-1]
+        product_string = ' '.join(product_string.split(' ')[:-1])
 
     print(name, ' //// ', product_string)
     return SequenceMatcher(a=name.lower(), b=product_string.lower()).ratio() > 0.9
@@ -79,10 +79,7 @@ class Cel:
 
 
 def make_product_json(product):
-    ret = {}
-
-    ret['name'] = '{} {}'.format(product.manufacturer, product.name)
-    ret['store_urls'] = []
+    ret = {'name': '{} {}'.format(product.manufacturer, product.name), 'store_urls': []}
 
     emag = Emag.get_store_object(product)
     if emag:
@@ -138,9 +135,9 @@ def filter_product(p, size, back, front, battery, ram, price):
     if not (ram == 'no' or (ram == 'yes' and p.ram >= 3)):
         return False
 
-    if not (price == '2000' or (price == '500' and p.price * 4 <= 1000) or (
-            price == '1000' and p.price * 4 <= 2000) or (
-                    price == '1500' and p.price * 4 <= 3000)):
+    if not (price == '2000' or (price == '500' and p.price * 4 <= 800) or (
+            price == '1000' and p.price * 4 <= 1700) or (
+                    price == '1500' and p.price * 4 <= 2500)):
         return False
 
     return True
