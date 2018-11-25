@@ -48,10 +48,10 @@ class BestBuy:
 
     def get_products(self, q):
         ret = []
-        for page in range(1, 10):
+        for page in range(1, 5):
             response = requests.get('https://api.bestbuy.com/v1/products({})'.format(q),
                                     params={'show': 'details,regularPrice', 'apiKey': self.api_key, 'format': 'json',
-                                            'sort': 'customerReviewAverage.desc', 'pageSize': 50, 'page': page})
+                                            'sort': 'customerReviewAverage.desc', 'pageSize': 100, 'page': page})
             try:
                 ret.extend([BestBuyProduct(p) for p in response.json()['products']])
             except KeyError as e:

@@ -14,8 +14,7 @@ def compare_phones_emag(name, storage, product):
     if product_string.endswith('GB'):
         product_string = ' '.join(product_string.split(' ')[:-1])
 
-    print(name, ' //// ', product_string)
-    return SequenceMatcher(a=name.lower(), b=product_string.lower()).ratio() > 0.9
+    return SequenceMatcher(a=name.lower(), b=product_string.lower()).ratio() > 0.85
 
 
 def compare_phones_cel(name, storage, product):
@@ -37,7 +36,7 @@ class Emag:
         soup = BeautifulSoup(html, 'html.parser')
 
         products = soup.find_all(class_='card-item js-product-data')
-        for product_html in products[0:5]:
+        for product_html in products:
             title = product_html.get('data-name')
             price = product_html.find(class_='product-new-price').text[0:-6]
             store_url = product_html.find(class_='product-title').get('href')
@@ -48,6 +47,7 @@ class Emag:
 
             phone_name, dual_sim, storage, network, color = cls.phone_pattern.match(title).groups()
             if compare_phones_emag(phone_name, storage, product):
+                print(phone_name)
                 return {'store': 'emag', 'price': price, 'store_url': store_url, 'image_url': image_url}
             return None
 
@@ -63,7 +63,7 @@ class Cel:
         soup = BeautifulSoup(html, 'html.parser')
 
         products = soup.find_all(class_='productListingWrapper')
-        for product_html in products[0:5]:
+        for product_html in products:
             title = product_html.find(itemprop='name').text
             price = product_html.find(itemprop='price').text
             store_url = product_html.find(class_='productListing-data-b product_link product_name').get('href')
