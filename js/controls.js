@@ -1,11 +1,13 @@
 var filters = {}
-function fill_row(json_path, row_name) {
-    $.getJSON(json_path, function (json) {
-        $(row_name).empty();
-        
+function fill_row() {
+        $('#first-row').empty();
+        $('#second-row').empty();
+    $.ajax("http://127.0.0.1:5000/products", {data: JSON.stringify(filters), contentType: 'application/json', type: 'POST', success:function(json) {
         for(var i = 0; i < 2; ++i) {
+            console.log(json);
             var phone_name = json[i]['name'];
-            var phone_image = json['store_urls'][0]['image_url'];
+            
+            var phone_image = json[i]['store_urls'][0]['image_url'];
             for (var j = 0 ; j < json[i]['store_urls'].length; ++j) {
                 var store = json[i]['store_urls'][j]['store'];
                 var store_logo = (store === "emag") ? store_logo = "https://s12emagst.akamaized.net/layout/ro/images/logo//38/57629.png" : "http://s.cel.ro/includes/templates/cel/images/logo.png";
@@ -14,15 +16,25 @@ function fill_row(json_path, row_name) {
 
                 var stores_string = '<li class="store"> <img class="inline store-logo" src=' + store_logo + '> <div class="inline store-price"><h3><a href="' + phone_url + '">' + phone_price + 'LEI</a></h3></div> </li>';
             }
-        $(row_name).append('<div class="item"> <img class="phone-image" src=' + phone_image + '> <div class= "phone-name"><h2>' + phone_name + '</h2></div><ul class="store-list">' + stores_string + '</ul></div>');
+        $('#first-row').append('<div class="item"> <img class="phone-image" src=' + phone_image + '> <div class= "phone-name"><h2>' + phone_name + '</h2></div><ul class="store-list">' + stores_string + '</ul></div>');
         }
-        
-    });
-}
+        for(var i = 2; i < 4; ++i) {
+            console.log(json);
+            var phone_name = json[i]['name'];
+            
+            var phone_image = json[i]['store_urls'][0]['image_url'];
+            for (var j = 0 ; j < json[i]['store_urls'].length; ++j) {
+                var store = json[i]['store_urls'][j]['store'];
+                var store_logo = (store === "emag") ? store_logo = "https://s12emagst.akamaized.net/layout/ro/images/logo//38/57629.png" : "http://s.cel.ro/includes/templates/cel/images/logo.png";
+                var phone_price = json[i]['store_urls'][j]['price'];
+                var phone_url = json[i]['store_urls'][j]['url'];
 
-function get_results(json_path) {
-    fill_row(json_path, '#first-row');
-    fill_row(json_path, '#second-row');
+                var stores_string = '<li class="store"> <img class="inline store-logo" src=' + store_logo + '> <div class="inline store-price"><h3><a href="' + phone_url + '">' + phone_price + 'LEI</a></h3></div> </li>';
+            }
+        $('#second-row').append('<div class="item"> <img class="phone-image" src=' + phone_image + '> <div class= "phone-name"><h2>' + phone_name + '</h2></div><ul class="store-list">' + stores_string + '</ul></div>');
+        }
+    }});
+    
 }
 
 $(document).ready(function() {
@@ -73,7 +85,19 @@ $(document).ready(function() {
      });
 
      $('.final').on('click', function () {
-        console.log(JSON.stringify(filters));
+        var i = Reveal.getState()['indexh'];
+        var j = Reveal.getState()['indexv'];
+        var k = Reveal.getState()['indexf'];
+        
+        Reveal.down();
+        
+        var ii = Reveal.getState()['indexh'];
+        var jj = Reveal.getState()['indexv'];
+        var kk = Reveal.getState()['indexf'];
+        Reveal.setState({'indexh':ii, 'indexv':jj, 'indexf':kk});
+        if (Reveal.getState()['indexv'] === j)
+        Reveal.setState({'indexh':i, 'indexv':j+1, 'indexf':k});
+        fill_row();
      });
 });
 
