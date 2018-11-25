@@ -1,3 +1,7 @@
+from threading import Thread
+
+import time
+
 from bestbuy_wrapper import BestBuy
 import requests
 from bs4 import BeautifulSoup
@@ -5,6 +9,7 @@ from urllib.parse import quote_plus
 import re
 from flask import Flask, jsonify, request
 from difflib import SequenceMatcher
+from queue import Queue
 
 app = Flask(__name__)
 
@@ -24,6 +29,20 @@ def compare_phones_cel(name, storage, product):
 
     # print(name, ' /// ', product_string)
     return name.lower() == product_string.lower()
+
+
+queue = Queue()
+final_list = []
+
+
+def worker_thread():
+    while True:
+        item = queue.get()
+        if len(final_list) >= 4 or item is None:
+            break
+        pj = make_product_json(item)
+        if len(pj['store_urls']):
+            final_list.append(pj)
 
 
 class Emag:
@@ -46,6 +65,8 @@ class Emag:
                 continue
 
             phone_name, dual_sim, storage, network, color = cls.phone_pattern.match(title).groups()
+
+            print('Comparing {} with {}'.format(phone_name, product.name))
             if compare_phones_emag(phone_name, storage, product):
                 print(phone_name)
                 return {'store': 'emag', 'price': price, 'store_url': store_url, 'image_url': image_url}
@@ -94,22 +115,29 @@ def post():
 
     args = request.json
 
-    q = 'details.name=Phone Style&details.value=Smartphone&customerReviewCount>10'
+    q = 'details.name=Phone Style&details.value=Smartphone&customerReviewCount>10&customerTopRated=true'
 
     if args['sim'] == 'yes':
         q += '&details.value=Dual SIM'
 
     products = best_buy.get_products(q)
 
-    final_list = []
     for prod in products:
         if filter_product(prod, args['size'], args['camera'], args['selfie'], args['battery'], args['ram'],
                           args['price']):
-            product_json = make_product_json(prod)
-            if len(product_json['store_urls']) > 0:
-                final_list.append(product_json)
-                if len(final_list) >= 4:
-                    break
+            queue.put(prod)
+
+    for _ in range(8):
+        queue.put(None)
+
+    threads = []
+    for _ in range(8):
+        t = Thread(target=worker_thread)
+        t.start()
+        threads.append(t)
+
+    for t in threads:
+        t.join()
 
     return jsonify(final_list)
 

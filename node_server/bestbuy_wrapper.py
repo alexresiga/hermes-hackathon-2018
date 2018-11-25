@@ -48,7 +48,7 @@ class BestBuy:
 
     def get_products(self, q):
         ret = []
-        for page in range(1, 5):
+        for page in range(1, 2):
             response = requests.get('https://api.bestbuy.com/v1/products({})'.format(q),
                                     params={'show': 'details,regularPrice', 'apiKey': self.api_key, 'format': 'json',
                                             'sort': 'customerReviewAverage.desc', 'pageSize': 100, 'page': page})
