@@ -37,7 +37,7 @@ class Emag:
         soup = BeautifulSoup(html, 'html.parser')
 
         products = soup.find_all(class_='card-item js-product-data')
-        for product_html in products[:5]:
+        for product_html in products[0:5]:
             title = product_html.get('data-name')
             price = product_html.find(class_='product-new-price').text[0:-6]
             store_url = product_html.find(class_='product-title').get('href')
@@ -63,7 +63,7 @@ class Cel:
         soup = BeautifulSoup(html, 'html.parser')
 
         products = soup.find_all(class_='productListingWrapper')
-        for product_html in products:
+        for product_html in products[0:5]:
             title = product_html.find(itemprop='name').text
             price = product_html.find(itemprop='price').text
             store_url = product_html.find(class_='productListing-data-b product_link product_name').get('href')
@@ -118,7 +118,7 @@ def post():
                 if len(final_list) >= 4:
                     break
 
-    return final_list
+    return jsonify(final_list)
 
 
 def filter_product(p, size, back, front, battery, ram, price):
