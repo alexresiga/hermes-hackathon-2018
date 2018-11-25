@@ -15,7 +15,7 @@ def compare_phones_emag(name, storage, product):
         name += ' ' + storage
 
     print(name, ' //// ', product_string)
-    return SequenceMatcher(a=name.lower(), b=product_string.lower()).ratio() > 0.6
+    return SequenceMatcher(a=name.lower(), b=product_string.lower()).ratio() > 0.9
 
 
 def compare_phones_cel(name, storage, product):

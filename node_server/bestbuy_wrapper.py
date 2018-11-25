@@ -6,7 +6,7 @@ class BestBuyProduct:
     def __init__(self, response):
         self.price = response['regularPrice']
         d = {detail['name']: detail['value'] for detail in response['details']}
-        self.name = d['Product Name'].replace('Unlocked', '').replace('with', '').replace('LTE', '').replace('Cell Phone', '').replace('Memory', '').replace('()', '').replace('Geek Squad', '')
+        self.name = d['Product Name']
         self.manufacturer = d['Device Manufacturer']
         self.screen_size = float(d['Screen Size'][0:-7])
         try:
@@ -47,7 +47,7 @@ class BestBuy:
         for page in range(1, 10):
             response = requests.get('https://api.bestbuy.com/v1/products({})'.format(q),
                                     params={'show': 'details,regularPrice', 'apiKey': self.api_key, 'format': 'json',
-                                            'sort': 'customerReviewAverage.desc', 'pageSize': 100, 'page': page})
+                                            'sort': 'customerReviewAverage.desc', 'pageSize': 50, 'page': page})
             try:
                 ret.extend([BestBuyProduct(p) for p in response.json()['products']])
             except KeyError as e:
