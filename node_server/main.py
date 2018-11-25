@@ -97,7 +97,7 @@ def make_product_json(product):
 
 @app.route('/products', methods=['POST'])
 def post():
-    best_buy = BestBuy('NB0Cj7ExAegRczGVuGH38jHW')
+    best_buy = BestBuy('MDhGMmNQnNCka8uLv5VKMWQD')
 
     args = request.json
 
@@ -112,30 +112,34 @@ def post():
     for prod in products:
         if filter_product(prod, args['size'], args['camera'], args['selfie'], args['battery'], args['ram'],
                           args['price']):
-            final_list.append(prod)
-            if len(final_list) >= 4:
-                break
+            product_json = make_product_json(prod)
+            if len(product_json['store_urls']) > 0:
+                final_list.append(product_json)
+                if len(final_list) >= 4:
+                    break
 
-    return jsonify([pp for pp in [make_product_json(p) for p in final_list] if len(pp['store_urls']) > 0])
+    return final_list
 
 
 def filter_product(p, size, back, front, battery, ram, price):
     if not ((p.screen_size <= 6 and size == 'small') or (p.screen_size >= 5 and size == 'big')):
         return False
 
-    if not ((back == 'meh' and p.back_camera >= 5) or (back == 'high' and p.back_camera >= 8)):
+    if not (back == 'low' or (back == 'meh' and p.back_camera >= 5) or (back == 'high' and p.back_camera >= 8)):
         return False
 
-    if not ((front == 'sometimes' and p.front_camera >= 5) or (front == 'yes' and p.front_camera >= 7)):
+    if not (front == 'no' or (front == 'sometimes' and p.front_camera >= 5) or (
+            front == 'yes' and p.front_camera >= 7)):
         return False
 
-    if not (battery == 'yes' and p.battery >= 20):
+    if not (battery == 'no' or (battery == 'yes' and p.battery >= 20)):
         return False
 
-    if not (ram == 'yes' and p.ram >= 3):
+    if not (ram == 'no' or (ram == 'yes' and p.ram >= 3)):
         return False
 
-    if not ((price == '500' and p.price * 4 <= 1000) or (price == '1000' and p.price * 4 <= 2000) or (
+    if not (price == '2000' or (price == '500' and p.price * 4 <= 1000) or (
+            price == '1000' and p.price * 4 <= 2000) or (
                     price == '1500' and p.price * 4 <= 3000)):
         return False
 
