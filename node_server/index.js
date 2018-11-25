@@ -4,17 +4,8 @@ const Enum = require('enum');
 const bestbuy = require('bestbuy')('NB0Cj7ExAegRczGVuGH38jHW');
 const request = require('request');
 const $ = require('cheerio');
+const queryString = require('querystring');
 
-
-const gadgetType = new Enum([
-    'Phone',
-    'Laptop',
-    'Computer',
-    'Headphones',
-    'Mouse',
-    'Keyboard',
-    'Monitor',
-    'Smartwatch']);
 
 class Store {
     constructor(name) {
@@ -34,6 +25,7 @@ class Emag extends Store {
 
     getProduct(product, callback) {
         let productName = product['Product Name'];
+
         console.log('https://www.emag.ro/search/' + encodeURIComponent(productName));
         request.get('https://www.emag.ro/search/' + encodeURIComponent(productName), {json: false}, function (err, res, body) {
             let productListHtml = $('.card-item.js-product-data', '#card_grid', body);
@@ -50,7 +42,9 @@ class Emag extends Store {
                     continue;
                 }
 
-                // TODO: Get right one
+                if (!Emag.comparePhones(values, product)) {
+                    continue;
+                }
 
                 callback({store: 'emag', price: price, store_url: store_url, image_url: image_url});
             }
@@ -58,21 +52,83 @@ class Emag extends Store {
             callback(null);
         });
     }
+
+    static comparePhones(values, product) {
+        let emagTitle = values[1];
+
+        let productName = product['Product Name'];
+        productName = product['Device Manufacturer'] + ' ' + productName;
+        if (productName.endsWith('GB')) {
+            emagTitle = emagTitle + ' ' + values[3];
+        }
+
+        // console.log(emagTitle + '///' + productName);
+        return (emagTitle.toLowerCase() === productName.toLowerCase())
+    }
+}
+
+class Altex extends Store {
+    constructor() {
+        super('Altex');
+    }
+
+    getProduct(product, callback) {
+        let productName = product['Product Name'];
+
+        console.log('https://altex.ro/cauta/?q=' + encodeURIComponent(productName));
+        request.get('https://altex.ro/cauta/?q=' + encodeURIComponent(productName), {json: false}, function (err, res, body) {
+            let productListHtml = $('.Products-item', body);
+            console.log(productListHtml.length);
+            for (let i = 0; i < productListHtml.length; ++i) {
+                let productHtml = productListHtml[i];
+
+                let title = $('.Product-name', productHtml).text().trim();
+                let price = $('.Price-int', productHtml).text();
+                let store_url = $('.Product-name', productHtml).attr('href').trim();
+                let image_url = $('.Product-photo', productHtml).attr('src').trim();
+
+                let values = title.match(/^Telefon (.+?)(?: |, )([0-9]+GB)(?: |, )(.+)$/i);
+                if (values === null) {
+                    console.log(title);
+                    continue;
+                }
+                console.log(values);
+                if (!Altex.comparePhones(values, product)) {
+                    continue;
+                }
+
+                callback({store: 'altex', price: price, store_url: store_url, image_url: image_url});
+            }
+        });
+    }
+
+    static comparePhones(values, product) {
+        let altexTitle = values[1];
+
+        let productName = product['Product Name'];
+        productName = product['Device Manufacturer'] + ' ' + productName;
+        if (productName.endsWith('GB')) {
+            altexTitle = altexTitle + ' ' + values[2];
+        }
+
+        //console.log(altexTitle + '///' + productName);
+        return (altexTitle.toLowerCase() === productName.toLowerCase())
+    }
 }
 
 
-stores = [new Emag()];
+stores = [new Altex(), new Emag()];
 
 let server = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'});
 
-    getMatches([{key: 'search', compare: '=', value: 'iphone xr'}, {
-        key: 'salePrice',
-        compare: '>',
-        value: 500
-    }], function (json) {
-        res.end(JSON.stringify(json));
-    })
+    getMatches(
+        {
+            'details.name': 'Phone Style',
+            'details.value': 'Smartphone'
+        }, function (json) {
+            res.end(JSON.stringify(json));
+        });
 
     // randomCommentByQuery(url.parse(req.url, true).query.q, function (json) {
     //
@@ -97,25 +153,16 @@ function compareRatings(a, b) {
 }
 
 
-// function queryStringStringify(obj) {
-//     let ret = '';
-//     for (let i = 0; i < obj.length; ++i) {
-//         let filter = obj[i];
-//         if (filter.key === 'search') {
-//             let values = filter.value.split(' ');
-//             for (let i = 0; i < values.length; ++i) {
-//                 let val = values[i];
-//                 ret += filter.key + '=' + val + '&';
-//             }
-//         } else {
-//             ret += filter.key + filter.compare + filter.value + '&';
-//         }
-//     }
-//
-//     ret = ret.substring(0, ret.length - 1);
-//
-//     return ret;
-// }
+function stringifyQuery(obj) {
+    let ret = '';
+    for (let key in obj) {
+        o = {};
+        o[key] = obj[key];
+        ret += queryString.stringify(o, eq = '=') + '&';
+    }
+
+    return ret.substring(0, ret.length - 1);
+}
 
 function findInStores(product) {
 
@@ -135,7 +182,7 @@ function getProductObj(productDict, callback) {
     let productObj = {};
 
     // TODO: Get phone info
-    productObj.name = 'penis';
+    productObj.name = productDict['Device Manufacturer'] + ' ' + productDict['Product Name'];
     productObj.store_urls = [];
 
     let c = 0;
@@ -169,22 +216,41 @@ function getProductObj(productDict, callback) {
     }
 }
 
+function inList(p, list) {
+    for (let i = 0; i < list.length; ++i) {
+        if (p['Product Name'] === list[i]['Product Name'])
+            return true;
+    }
+    return false;
+}
+
 function getMatches(filterObj, callback) {
     console.log(filterObj);
-    let query = queryStringStringify(filterObj);
+
+    let query = stringifyQuery(filterObj);
+
     console.log(query);
-    bestbuy.products(query, {show: 'name,customerReviewCount,customerReviewAverage,customerTopRated,details.name,details.value,sku'}).then(function (data) {
+    bestbuy.products(query, {
+        show: 'name,customerReviewAverage,customerTopRated,details',
+        pageSize: 50
+    }).then(function (data) {
         let productList = [];
 
         let products = data.products.map(p => productToDict(p));
+        let uniqueProducts = [];
+
+        for (let i = 0; i < products.length; ++i) {
+            if (!inList(products[i], uniqueProducts))
+                uniqueProducts.push(products[i]);
+        }
 
         // TODO: More than 3 matches
-        console.log(products.length + ' products!!!');
+        console.log(uniqueProducts.length + ' products!!!');
         let c = 0;
-        for (let i = 0; i < 3; ++i) {
+        for (let i = 0; i < uniqueProducts.length; ++i) {
             c++;
 
-            let product = products[i];
+            let product = uniqueProducts[i];
             getProductObj(product, function (productObj) {
                 if (productObj) {
                     productList.push(productObj);
