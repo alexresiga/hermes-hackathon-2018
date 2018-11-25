@@ -7,6 +7,10 @@ class BestBuyProduct:
         self.price = response['regularPrice']
         d = {detail['name']: detail['value'] for detail in response['details']}
         self.name = d['Product Name']
+
+        if self.name.endswith('GB'):
+            self.name = self.name.split(' ')[:-1]
+
         self.manufacturer = d['Device Manufacturer']
         self.screen_size = float(d['Screen Size'][0:-7])
         try:

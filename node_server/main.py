@@ -12,7 +12,7 @@ app = Flask(__name__)
 def compare_phones_emag(name, storage, product):
     product_string = product.manufacturer + ' ' + product.name
     if product_string.endswith('GB'):
-        name += ' ' + storage
+        product_string = product_string.split(' ')[:-1]
 
     print(name, ' //// ', product_string)
     return SequenceMatcher(a=name.lower(), b=product_string.lower()).ratio() > 0.9
