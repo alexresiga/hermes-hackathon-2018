@@ -1033,20 +1033,20 @@
 }
 
 .mdc-checkbox__checkmark {
-    color: #fff
+    color: black;
 }
 
 .mdc-checkbox__mixedmark {
-    border-color: #fff
+    border-color: black;
 }
 
 .mdc-checkbox__background::before {
-    background-color: #018786
+    background-color: black;
 }
 
 @supports not (-ms-ime-align: auto) {
     .mdc-checkbox__background::before {
-        background-color: var(--mdc-theme-secondary, #018786)
+        background-color: black;
     }
 }
 
@@ -1057,10 +1057,10 @@
 
 .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
 .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background {
-    border-color: #018786;
-    border-color: var(--mdc-theme-secondary, #018786);
-    background-color: #018786;
-    background-color: var(--mdc-theme-secondary, #018786)
+    border-color:black;
+    border-color: black;
+    background-color:black;
+    background-color: black;
 }
 
 @-webkit-keyframes mdc-checkbox-fade-in-background-0 {
@@ -1113,7 +1113,7 @@
     }
     100% {
         border-color: rgba(0, 0, 0, .54);
-        background-color: transparent
+        background-color: black;
     }
 }
 
@@ -1328,7 +1328,7 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    opacity: 0;
+    opacity: 1;
     cursor: inherit
 }
 

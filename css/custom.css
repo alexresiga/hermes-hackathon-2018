@@ -1,8 +1,212 @@
 button.phone.mdc-button {
     background-color: #BC031F;
+    min-width: 200px;
+    font-size: 40px;
+    min-height: 100px;
 }
 
-button.phone.mdc-button:active {
-    background-color: #BC031F!important;
-    opacity: 0.7;
+@supports not (-ms-ime-align: auto) {
+    .phone.mdc-button::before,
+    .phone.mdc-button::after {
+        background-color:  #BC031F;
+    }
+}
+
+button.laptop.mdc-button {
+	background-color: #157145;
+	min-width: 220px;
+    font-size: 40px;
+    min-height: 100px;
+}
+@supports not (-ms-ime-align: auto) {
+    .laptop.mdc-button::before,
+    .laptop.mdc-button::after {
+        background-color:  #157145;
+    }
+}
+button.headphones.mdc-button {
+	background-color: #33658a;
+	min-width: 350px;
+    font-size: 40px;
+    min-height: 100px;
+}
+
+@supports not (-ms-ime-align: auto) {
+    .headphones.mdc-button::before,
+    .headphones.mdc-button::after {
+        background-color:  #33658a;
+    }
+}
+
+button.pc.mdc-button {
+	background-color: #faa916;
+	min-width: 106px;
+    font-size: 40px;
+    min-height: 100px;
+}
+
+@supports not (-ms-ime-align: auto) {
+    .pc.mdc-button::before,
+    .pc.mdc-button::after {
+        background-color:  #faa916;
+    }
+}
+
+.results {
+    
+    border: 5px solid #1B1B1E;
+    min-width: 100%!important;
+    
+    
+}
+
+.item { 
+    
+    border: 3px solid #1B1B1E!important;
+    padding: 10px 7px!important;
+    min-width: 300px!important;
+    min-height: 200px!important;
+    overflow: auto;
+    display: inline-block;
+    margin: 0px 20px!important;
+}
+
+
+.phone-name > h2 {
+    text-transform: none!important;
+}
+
+.phone-name {
+    text-align: left;
+    
+    float: left;
+    margin-left: 10px!important;
+}
+
+.phone-name::after {
+    clear: both;
+}
+
+.store-list {
+    
+    clear: left;
+    float: left;
+    list-style-type: none!important;
+    margin-left: 0!important;
+    left: 0!important;
+}
+
+.store > img {
+    border: none!important;
+    margin: 0px!important;
+}
+
+.phone-image {
+    float: left;
+    border: none!important;
+    
+    
+}
+
+.inline {
+    display: inline-block;
+}
+
+h3 > a {
+    color: #1B1B1E!important;
+}
+h3 > a:hover {
+    text-decoration: underline!important;
+    color: #1B1B1E!important;
+}
+
+
+input[type=checkbox] + label {
+    display: inline-block;
+    margin: 0.2em;
+    cursor: pointer;
+    padding: 0.2em;
+    font-size: 0.7em!important;
+  }
+  
+  input[type=checkbox] {
+    display: none;
+  }
+  
+  input[type=checkbox] + label:before {
+    content: "\2714";
+    border: 0.1em solid #000;
+    border-radius: 0.2em;
+    display: inline-block;
+    
+    width: 0.8em;
+    height: 0.8em;
+    padding-left: 0.2em;
+    padding-bottom: 0.3em;
+    margin-right: 0.2em;
+    vertical-align: bottom;
+    color: transparent;
+    transition: .2s;
+    
+  }
+  
+  input[type=checkbox] + label:active:before {
+    transform: scale(0);
+  }
+  
+  input[type=checkbox]:checked + label:before {
+    background-color: #BC031F;
+    border-color: #BC031F;
+    color: #fff;
+  }
+  
+  input[type=checkbox]:disabled + label:before {
+    transform: scale(1);
+    border-color: #aaa;
+  }
+  
+  input[type=checkbox]:checked:disabled + label:before {
+    transform: scale(1);
+    background-color: #BC031F;
+    border-color: #BC031F;
+  }
+
+  .form-radio
+{
+     -webkit-appearance: none;
+     -moz-appearance: none;
+     appearance: none;
+     display: inline-block;
+     position: relative;
+     background-color: #BC031F;
+     color: #666;
+     top: 10px;
+     height: 50px;
+     width: 50px;
+     border: 0;
+     border-radius: 50px;
+     cursor: pointer;     
+     margin-right: 17px;
+     outline: none;
+}
+.form-radio:checked::before
+{
+     position: absolute;
+     font: 33px/1 'Open Sans', sans-serif;
+     left: 13px;
+     top: 7px;
+     content: '\02143';
+     transform: rotate(40deg);
+}
+.form-radio:hover
+{
+     background-color: #c52020;
+}
+.form-radio:checked
+{
+     background-color: #a81515;
+}
+
+label.radio-label {
+    margin: 17px 17px 17px 0px;
 }
