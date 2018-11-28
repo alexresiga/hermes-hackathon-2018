@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from node_server.model.product import Product
+from node_server.utils.woker_threads import WorkerPool
 
 
 class Emag:
@@ -12,14 +13,18 @@ class Emag:
         self.url = 'https://www.emag.ro'
 
     def get_products(self, page):
-        response = requests.get(self.url + page)
-        response.raise_for_status()
+        try:
+            response = requests.get(self.url + page)
+            response.raise_for_status()
 
-        soup = BeautifulSoup(response.content, 'html.parser')
-        product_pages = [obj.get('href') for obj in soup.find_all(class_='product-title js-product-url')]
-        return product_pages
+            soup = BeautifulSoup(response.content, 'html.parser')
+            product_pages = [obj.get('href') for obj in soup.find_all(class_='product-title js-product-url')]
+            return product_pages
+        except requests.exceptions.HTTPError as e:
+            print(e)
 
-    def get_product(self, url):
+    @staticmethod
+    def get_product(url):
         response = requests.get(url)
         response.raise_for_status()
 
@@ -53,16 +58,9 @@ def thread(emag, url):
 if __name__ == '__main__':
     emag = Emag()
     print('Getting product urls...')
-    product_urls = emag.get_products('/telefoane-mobile/c')
-    threads = []
-    for p_url in product_urls:
-        threads.append(Thread(target=thread, args=(emag, p_url)))
+    product_urls = emag.get_products('/telefoane-mobile')
 
-    for t in threads:
-        t.start()
-
-    for t in threads:
-        t.join()
+    lst = WorkerPool(product_urls[:3], Emag.get_product).get_results()
 
     print([x[1] for x in lst])
     # print(emag.get_product(
