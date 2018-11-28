@@ -9,12 +9,12 @@ from node_server.utils.woker_threads import WorkerPool
 
 
 class Emag:
-    def __init__(self):
-        self.url = 'https://www.emag.ro'
+    base_url = 'https://www.emag.ro'
 
-    def get_products(self, page):
+    @staticmethod
+    def get_products(page):
         try:
-            response = requests.get(self.url + page)
+            response = requests.get(Emag.base_url + page)
             response.raise_for_status()
 
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -60,9 +60,6 @@ if __name__ == '__main__':
     print('Getting product urls...')
     product_urls = emag.get_products('/telefoane-mobile')
 
-    lst = WorkerPool(product_urls[:3], Emag.get_product).get_results()
+    lst = WorkerPool(product_urls, Emag.get_product).get_results()
 
     print([x[1] for x in lst])
-    # print(emag.get_product(
-    #  'https://www.emag.ro/telefon-mobil-samsung-galaxy-j4-2018-dual-sim-32gb-4g-black-sm-j415fzkgrom/pd/DVPPVVBBM/').__dict__)
-    # print(emag.get_products('/telefoane-mobile/c').__dict__)
