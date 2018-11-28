@@ -1,10 +1,9 @@
 import re
-from threading import Thread
 
 import requests
 from bs4 import BeautifulSoup
 
-from node_server.model.product import Product
+from node_server.crawlers.cel import Cel
 from node_server.utils.woker_threads import WorkerPool
 
 
@@ -48,18 +47,22 @@ class Emag:
         return product_code, phone_name, specs
 
 
-lst = []
-
-
-def thread(emag, url):
-    lst.append(emag.get_product(url))
-
-
 if __name__ == '__main__':
-    emag = Emag()
-    print('Getting product urls...')
-    product_urls = emag.get_products('/telefoane-mobile')
+    print('Getting emag product urls...')
+    emag_product_urls = Emag.get_products('/telefoane-mobile')
 
-    lst = WorkerPool(product_urls, Emag.get_product).get_results()
+    print('Getting cel product urls...')
+    cel_product_urls = Cel.get_products('/telefoane-mobile')
 
-    print([x[1] for x in lst])
+    emag_products = WorkerPool(emag_product_urls, Emag.get_product).get_results()
+    cel_products = WorkerPool(cel_product_urls, Cel.get_product).get_results()
+
+    phones = {}
+    for p in emag_products + cel_products:
+        p_code = p[0].upper()
+        if p_code not in phones:
+            phones[p_code] = []
+        phones[p_code].append(p)
+
+    for k, v in phones.items():
+        print(k, len(v))

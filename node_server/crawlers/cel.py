@@ -27,9 +27,13 @@ class Cel:
 
         soup = BeautifulSoup(response.content, 'html.parser')
         product_code = soup.find(id='cod').text.strip()
-        return product_code
 
+        price_table = soup.find(id='pret_tabela')
+        current_price = float(price_table.find(class_='productPrice').text.strip())
+        try:
+            old_price = float(re.search('pret vechi ([0-9]+) lei', price_table.find(class_='c_online').text.strip(),
+                                        flags=re.IGNORECASE).group(1))
+        except AttributeError:
+            old_price = None
 
-
-if __name__ == '__main__':
-   print(Cel.get_product('http://www.cel.ro/telefoane-mobile/telefon-mobil-nokia-3.1-16gb-dual-sim-4g-black-pNiAwMDEq-l/'))
+        return product_code, (current_price, old_price)
